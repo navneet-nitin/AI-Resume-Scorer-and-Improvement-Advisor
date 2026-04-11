@@ -1,0 +1,15 @@
+venv/
+.env
+
+backend/venv/
+backend/.env
+backend/.pycache_tmp/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.pytest_cache/
+.mypy_cache/
+.coverage
