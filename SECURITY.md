@@ -14,7 +14,7 @@ If you discover a security vulnerability in this project, **do not open a public
 
 Please report vulnerabilities via one of the following:
 
-- **Email:** [navneetnitin8gmail.com]
+- **Email:** [navneetnitin8@gmail.com]
 - **GitHub Private Vulnerability Reporting:** Use the "Report a vulnerability" button under the Security tab of this repository.
 
 ### What to Include
