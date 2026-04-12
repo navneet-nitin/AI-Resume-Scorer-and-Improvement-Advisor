@@ -19,6 +19,15 @@ REQUIRED_RESULT_KEYS = {
     "rewritten_sections",
 }
 
+COMPACT_RETRY_SUFFIX = """
+
+IMPORTANT RETRY INSTRUCTIONS:
+- Your previous response was too long or incomplete.
+- Return the same JSON schema again.
+- Keep every string very short.
+- Do not include any text outside the JSON object.
+"""
+
 
 def _collect_response_text(response) -> str:
     text = getattr(response, "text", None)
@@ -102,6 +111,19 @@ def _validate_result_shape(result: dict) -> dict:
     return result
 
 
+def _generate_response_text(model, prompt: str) -> str:
+    response = model.generate_content(
+        prompt,
+        generation_config={
+            "temperature": 0.1,
+            "top_p": 0.8,
+            "max_output_tokens": 8192,
+            "response_mime_type": "application/json",
+        },
+    )
+    return _collect_response_text(response)
+
+
 def analyze_with_gemini(prompt: str) -> dict:
     if not GEMINI_API_KEY:
         print("GEMINI ERROR: Missing GEMINI_API_KEY")
@@ -109,31 +131,29 @@ def analyze_with_gemini(prompt: str) -> dict:
 
     try:
         model = genai.GenerativeModel("models/gemini-2.5-flash")
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": 0.1,
-                "top_p": 0.8,
-                "max_output_tokens": 4096,
-                "response_mime_type": "application/json",
-            },
-        )
+        prompts_to_try = [prompt, f"{prompt.rstrip()}\n{COMPACT_RETRY_SUFFIX}"]
 
-        raw_text = _collect_response_text(response)
-        print("\n===== RAW AI RESPONSE =====\n")
-        print(raw_text)
-        print("\n==========================\n")
+        for attempt_index, attempt_prompt in enumerate(prompts_to_try, start=1):
+            raw_text = _generate_response_text(model, attempt_prompt)
+            print(f"\n===== RAW AI RESPONSE ATTEMPT {attempt_index} =====\n")
+            print(raw_text)
+            print("\n=========================================\n")
 
-        try:
-            parsed = json.loads(raw_text)
-        except JSONDecodeError:
-            json_text = _extract_first_json_object(raw_text)
-            parsed = json.loads(json_text)
+            try:
+                try:
+                    parsed = json.loads(raw_text)
+                except JSONDecodeError:
+                    json_text = _extract_first_json_object(raw_text)
+                    parsed = json.loads(json_text)
 
-        if not isinstance(parsed, dict):
-            raise ValueError("INVALID_JSON_FROM_AI")
+                if not isinstance(parsed, dict):
+                    raise ValueError("INVALID_JSON_FROM_AI")
 
-        return _validate_result_shape(parsed)
+                return _validate_result_shape(parsed)
+            except ValueError as exc:
+                if str(exc) != "INCOMPLETE_JSON_FROM_AI" or attempt_index == len(prompts_to_try):
+                    raise
+                print("AI response was truncated before JSON completion, retrying with a compact prompt")
 
     except ValueError as exc:
         if str(exc) == "INCOMPLETE_JSON_FROM_AI":

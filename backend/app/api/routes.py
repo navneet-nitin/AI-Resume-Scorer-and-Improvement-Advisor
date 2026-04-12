@@ -1,6 +1,5 @@
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
-from app.config import PROMPT_TEXT_LIMIT
 from app.services.gemini_service import analyze_with_gemini
 from app.services.pdf_service import extract_text_from_pdf
 from app.services.supabase_service import (
@@ -18,6 +17,7 @@ router = APIRouter()
 async def analyze_resume(
     file: UploadFile = File(...),
     user_email: str = Form(None),
+    job_target: str | None = Form(None),
 ):
     try:
         # 🔹 Read file
@@ -36,17 +36,18 @@ async def analyze_resume(
             raise ValueError("TEXT_EXTRACTION_FAILED")
 
         # 🔹 Step 4: Trim text
-        trimmed_text = extracted_text[:PROMPT_TEXT_LIMIT]
+        analysis_text = extracted_text
 
         # 🔹 Step 5: Insert initial DB record (IMPORTANT FIX)
         submission_id = insert_resume_record(
             file_url=file_url,
-            preview_text=trimmed_text,
+            preview_text=extracted_text,
             user_email=user_email   # ✅ FIXED
         )
 
         # 🔹 Step 6: Build prompt
-        prompt = build_prompt(trimmed_text)
+        normalized_job_target = (job_target or "").strip() or None
+        prompt = build_prompt(analysis_text, normalized_job_target)
 
         # 🔹 Step 7: Call Gemini
         result = analyze_with_gemini(prompt)

@@ -1,4 +1,14 @@
-def build_prompt(cv_text: str) -> str:
+def build_prompt(cv_text: str, job_target: str | None = None) -> str:
+    target_section = ""
+    if job_target:
+        target_section = f"""
+
+TARGET ROLE OR JOB DESCRIPTION:
+{job_target}
+
+Use this target context to judge relevance, missing keywords, and rewrite quality more specifically.
+"""
+
     return f"""
 You are a senior technical recruiter with 10+ years of experience.
 
@@ -7,11 +17,13 @@ No explanation. No markdown. No extra text.
 Return one single JSON object only.
 Do not wrap JSON in code fences.
 All keys must be present.
+Keep values concise so the full JSON fits in one response.
 
 Analyze the resume below across 10 parameters.
 
 RESUME:
 {cv_text}
+{target_section}
 
 SCORING RULES:
 - Be brutally honest
@@ -23,83 +35,83 @@ RETURN EXACT JSON:
 {{
   "overall_score": <integer 0-100>,
   "grade": "<A/B/C/D/F>",
-  "overall_verdict": "<2-3 sentence honest summary>",
+  "overall_verdict": "<max 50 words>",
   "parameters": [
     {{
       "name": "Contact Information Completeness",
       "score": <0-10>,
       "weight": 5,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Professional Summary",
       "score": <0-10>,
       "weight": 10,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Skills Section",
       "score": <0-10>,
       "weight": 10,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Projects & Experience",
       "score": <0-10>,
       "weight": 20,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "ATS Keywords",
       "score": <0-10>,
       "weight": 15,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Education",
       "score": <0-10>,
       "weight": 5,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Formatting & Clarity",
       "score": <0-10>,
       "weight": 10,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Resume Length",
       "score": <0-10>,
       "weight": 5,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Achievements vs Responsibilities",
       "score": <0-10>,
       "weight": 10,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }},
     {{
       "name": "Overall Professional Impression",
       "score": <0-10>,
       "weight": 10,
-      "feedback": "<specific feedback>",
+      "feedback": "<specific feedback, max 25 words>",
       "status": "<good/improve/critical>"
     }}
   ],
   "top_3_critical_issues": [
-    "<issue 1>",
-    "<issue 2>",
-    "<issue 3>"
+    "<issue 1, max 15 words>",
+    "<issue 2, max 15 words>",
+    "<issue 3, max 15 words>"
   ],
   "ats_keywords_missing": [
     "<keyword 1>",
@@ -107,8 +119,8 @@ RETURN EXACT JSON:
     "<keyword 3>"
   ],
   "rewritten_sections": {{
-    "summary": "<improved summary>",
-    "one_weak_bullet_rewrite": "<original vs improved>"
+    "summary": "<improved summary, max 60 words>",
+    "one_weak_bullet_rewrite": "<improved bullet only, max 30 words>"
   }}
 }}
 """
