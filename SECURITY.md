@@ -31,7 +31,7 @@ Please report vulnerabilities via one of the following:
 
 ### Scope
 
-This project uses the Anthropic Claude API to score and improve resumes. Key areas of concern include:
+This project uses the Google Gemini API to score and improve resumes. Key areas of concern include:
 
 - Prompt injection attacks via malicious resume content
 - Exposure of API keys or user-uploaded data
