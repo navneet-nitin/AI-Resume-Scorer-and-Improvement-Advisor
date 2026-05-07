@@ -60,6 +60,14 @@ The system accepts a PDF resume, extracts its text using PyMuPDF, passes it thro
 | AI Model | Google Gemini 2.5 Flash |
 | Team Size | 10 members |
 
+<div align="center">
+  <br/>
+  <img src="https://raw.githubusercontent.com/navneet-nitin/AI-Resume-Scorer-and-Improvement-Advisor/main/images/Home%20Page.png" alt="CVDekho Home Page" width="100%"/>
+  <br/>
+  <em>CVDekho landing page — 2,400+ job seekers scored, 91% avg. ATS pass rate</em>
+  <br/><br/>
+</div>
+
 ---
 
 ## The Problem We're Solving
@@ -82,6 +90,14 @@ CVDekho provides **specific, parameter-level, AI-powered feedback** — the kind
 - **Fast pipeline** — PDF upload to full JSON result in under 15 seconds
 - **Privacy-first storage** — PDFs stored in a private Supabase bucket; no public access, no human review
 - **Fully free** — deployed on free-tier infrastructure with no credit card required
+
+<div align="center">
+  <br/>
+  <img src="https://raw.githubusercontent.com/navneet-nitin/AI-Resume-Scorer-and-Improvement-Advisor/main/images/CV%20upload%20page.png" alt="CVDekho Upload Page" width="100%"/>
+  <br/>
+  <em>Upload page — upload your PDF and enter a target role for role-specific ATS keyword matching</em>
+  <br/><br/>
+</div>
 
 ---
 
@@ -174,6 +190,14 @@ Step 9  →  analyze_with_gemini() — Gemini called, JSON parsed, schema valida
 Step 10 →  update_resume_result() — Supabase record updated with final result
 Step 11 →  Structured JSON returned → Frontend renders score, breakdown, rewrites
 ```
+
+<div align="center">
+  <br/>
+  <img src="https://raw.githubusercontent.com/navneet-nitin/AI-Resume-Scorer-and-Improvement-Advisor/main/images/Website.png" alt="CVDekho How It Works" width="100%"/>
+  <br/>
+  <em>3-step flow — Upload Resume → Select Role → Get AI Feedback in seconds</em>
+  <br/><br/>
+</div>
 
 ---
 
