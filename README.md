@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/navneet-nitin/AI-Resume-Scorer-and-Improvement-Advisor/main/Company%20Logo.jpeg" alt="CVDekho Logo" width="160"/>
+<img src="https://raw.githubusercontent.com/navneet-nitin/AI-Resume-Scorer-and-Improvement-Advisor/main/images/Company%20Logo.jpeg" alt="CVDekho Logo" width="160"/>
 
 # CVDekho — AI Resume Scorer & Improvement Advisor
 
